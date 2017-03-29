@@ -11,6 +11,7 @@
 #include<pthread.h>
 #include<semaphore.h>
 
+
 int readFlag=0, listFlag=0,exitFlag=0;
 sem_t fileLock,threadLock;
 char userinput,storage[1],globalMessage[1024];
