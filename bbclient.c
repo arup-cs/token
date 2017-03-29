@@ -11,7 +11,12 @@
 #include<pthread.h>
 #include<semaphore.h>
 
+<<<<<<< HEAD
 int readFlag=0, listFlag=0,exitFlag=0,newClientFlag=0;
+=======
+
+int readFlag=0, listFlag=0,exitFlag=0;
+>>>>>>> c06bdea0a15d0ec8757471142d2267c1e94cbf7f
 sem_t fileLock,threadLock;
 char userinput,storage[1],globalMessage[1024];
 
