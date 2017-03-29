@@ -11,7 +11,7 @@
 #include<pthread.h>
 #include<semaphore.h>
 
-int readFlag=0, listFlag=0,exitFlag=0;
+int readFlag=0, listFlag=0,exitFlag=0,newClientFlag=0;
 sem_t fileLock,threadLock;
 char userinput,storage[1],globalMessage[1024];
 
@@ -92,28 +92,44 @@ int main(int argc, char ** argv){
 	}
 
         struct sockaddr_in si_other,si_me;
-        int s=0;
+        int s=0,position;
 	socklen_t slen=sizeof(si_other);
         char buffer[1024]="hello world";
+	memset((char *) &si_other, 0, sizeof(si_other));
 
 //*************************************argument Management ******************************************
 	if(argc!=5 && argc!=6){
 		printf("Error\n Usage: <%s> <portNumber> <hostIP> <hostPort> <fileName> \n",argv[0]);
-		printf("OR\n Usage: <%s> <new> <portNumebr> <hostIP> <hostPort> <fileName>\n",argv[0]);
+		printf("OR\n Usage: <%s> <-new> <portNumebr> <hostIP> <hostPort> <fileName>\n",argv[0]);
 		exit(1);
 	}else if(argc==5){
-		si_me.sin_port=(u_short)(atoi(argv[1]));
-		printf("the port is %hu\n",si_me.sin_port);
-		fileName=(argv[4]);
+		position=1;
+	}else if(argc==6){
+		if(strcmp("-new",argv[1])==0){
+			newClientFlag=0;
+			printf("Seding a new Join request to client\n");
+			position=2;
+		}
+		
 	}
+		//setting up client's port number 
+		si_me.sin_port=(u_short)(atoi(argv[position])); //1 no position
+		
+		//setting up host port number
+		si_other.sin_port = htons(atoi(argv[position+2])); //3 no position
+		
+		//setting up host IP address: 
+		si_other.sin_addr.s_addr=inet_addr(argv[position+1]);    //2 no position
+
+		printf("the port is %hu\n",si_me.sin_port); 
+		
+		//setting up filename
+		fileName=(argv[position+3]); //4th Position  
 
 	printf("Satisfying compiler%d %d %s\n",s,slen,buffer);
 //******i**********************************************************************************************
-	memset((char *) &si_other, 0, sizeof(si_other));
         si_other.sin_family = AF_INET;
-        si_other.sin_port = htons(60000);
-	si_other.sin_addr.s_addr=inet_addr("127.0.0.1");    
-//	buffer='Hello server';
+       //	buffer='Hello server';
 	
 	
 	sendto(socketfd, buffer, sizeof (buffer), 0, (struct sockaddr *) &si_other, (socklen_t)slen);
